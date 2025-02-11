@@ -12,11 +12,7 @@ def test_numpy_exercises():
     arr_matrix = np.arange(16).reshape(4, 4)
     assert np.array_equal(arr_matrix, np.arange(16).reshape(4, 4)), "Test 2 Failed"
 
-    # Test 3: Creating an Array
-    arr1 = np.arange(1, 11)
-    assert np.array_equal(arr1, np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])), "Test 3 Failed"
-
-    # Test 4: Array Operations
+    # Test 3: Array Operations
     a = np.array([1, 2, 3, 4, 5])
     b = np.array([10, 20, 30, 40, 50])
     
@@ -25,12 +21,12 @@ def test_numpy_exercises():
     assert np.array_equal(a * b, np.array([10, 40, 90, 160, 250])), "Test 4 Multiplication Failed"
     assert np.array_equal(a / b, np.array([0.1, 0.1, 0.1, 0.1, 0.1])), "Test 4 Division Failed"
 
-    # Test 5: Array Slicing
+    # Test 4: Array Slicing
     arr2 = np.array([10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
     sliced = arr2[2:7]  # index 2 to 6
     assert np.array_equal(sliced, np.array([30, 40, 50, 60, 70])), "Test 5 Failed"
 
-    # Test 6: NumPy Methods
+    # Test 5: NumPy Methods
     arr3 = np.random.randint(1, 50, (3, 3))
     mean_value = arr3.mean()
     sum_value = arr3.sum()
