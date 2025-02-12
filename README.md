@@ -1,4 +1,4 @@
-﻿This file provides a detailed overview of the assignment.
+﻿# Python Numpy and Pandas assignment
 
 **Content:**
 
@@ -35,7 +35,8 @@ This assignment is designed to test your understanding of Numpy, Pandas, and Pan
 - You must pass all test cases to receive full credit.
 
 ## Submission
-Submit the link to your repository once all tasks are completed.
+
+- Push your code to the repo to submit your assignment
 
 ## License
 This assignment is licensed under the Omdena License.
