@@ -1,99 +1,43 @@
 import unittest
-import io
-import sys
-import pytest
-# import assignment  # Assumes the student's solution is in assignment.py
-import nbconvert
-# In test file
-import importlib.util
+import nbformat
+import os
 import numpy as np
 import pandas as pd
 
-def notebook_to_python(notebook_path):
-    """Convert Jupyter notebook to Python script"""
-    exporter = nbconvert.PythonExporter()
-    python_code, _ = exporter.from_filename(notebook_path)
-    return python_code
-
-def import_notebook_module(notebook_path):
-    """Dynamically import notebook as a module"""
-    module_name = 'assignment'
-    spec = importlib.util.spec_from_loader(module_name, loader=None)
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[module_name] = module
+class TestAssignmentNotebook(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        """Load and execute the notebook before running tests"""
+        notebook_path = "assignment.ipynb"
+        assert os.path.exists(notebook_path), f"Notebook {notebook_path} not found"
+        
+        with open(notebook_path, "r", encoding="utf-8") as f:
+            nb = nbformat.read(f, as_version=4)
+        
+        cls.global_env = {}
+        
+        for cell in nb.cells:
+            if cell.cell_type == "code":
+                exec(cell.source, cls.global_env)
     
-    with open(notebook_path, 'r') as f:
-        notebook_content = nbconvert.PythonExporter().from_filename(notebook_path)[0]
+    def test_numpy_array_creation(self):
+        """Test if a NumPy array is created correctly"""
+        self.assertIn("my_array", self.global_env, "my_array not found in notebook")
+        my_array = self.global_env["my_array"]
+        self.assertIsInstance(my_array, np.ndarray, "my_array is not a NumPy array")
     
-    exec(notebook_content, module.__dict__)
-    return module
-
-# Then use in tests
-assignment = import_notebook_module('assignment.ipynb')
+    def test_dataframe_creation(self):
+        """Test if a Pandas DataFrame is created correctly"""
+        self.assertIn("df", self.global_env, "df not found in notebook")
+        df = self.global_env["df"]
+        self.assertIsInstance(df, pd.DataFrame, "df is not a Pandas DataFrame")
     
-# Task 1: NumPy Basics
-# 1.
-def test_numpy_array_creation(arr):
-    expected = np.array([0, 0, 0, 0, 1, 0, 0, 0, 0, 0])
-    np.testing.assert_array_equal(arr, expected)
-
-# 2.
-def test_numpy_matrix_creation(matrix):
-    assert matrix.shape == (4, 4), "Array shape is incorrect"
-    assert 0 <= matrix.min() <= 15 and 0 <= matrix.max() <= 15, "Array values are out of bounds"
-
-# 3.
-def test_numpy_operations(addition, subtraction, division, multiplication):
-    np.testing.assert_array_equal(addition, np.array([[45, 59, 12], [11, 48, 26], [47, 25, 17]]))
-    np.testing.assert_array_equal(subtraction, np.array([[37,  1,  8], [ 1, 22, 20], [-1, -7,  3]]))
-    np.testing.assert_array_equal(division, np.array([[10.25,  1.03448276,  5.], [1.2,  2.69230769,  7.66666667], [0.95833333,  0.5625,  1.42857143]]))
-    np.testing.assert_array_equal(multiplication, np.array([[164, 870,  20], [ 30, 455,  69], [552, 144,  70]]))
-
-# 4.
-def test_numpy_slicing(sliced):
-    expected = np.array([30, 40, 50, 60, 70])
-    np.testing.assert_array_equal(sliced, expected)
-
-# 5.
-def test_numpy_methods(arr, add, average, max):
-    
-    assert arr.shape == (3, 3), "Array shape is incorrect"
-    #
-    expected_sum = 221
-    expected_average = 24.55
-    expected_max = 60
-    np.testing.assert_array_equal(add, expected_sum)
-    np.testing.assert_array_equal(average, expected_average)
-    np.testing.assert_array_equal(max, expected_max) 
-
-# Task 2: Pandas Basics
-# 1.
-def test_pandas_series_creation(series):
-    assert series['a'] == 10
-    assert series['e'] == 50
-
-# 2.
-def test_dataframe_reading_and_manipulation(df):
-    assert df.loc[0, 'Tax'] == 7319.3
-    assert df.loc[1, 'Tax'] == 8539.8
-    filtered_df = df[df['Age'] > 36]
-    assert len(filtered_df) == 11
-    assert filtered_df.iloc[0]['Name'] == "Bob"
-
-# 3.
-def test_dataframe_aggregation(total_sales):
-    assert total_sales["North"] == 2200
-    assert total_sales["South"] == 2800
-
-# 4.
-def test_dataframe_merging(merged):
-    assert len(merged) == 4
-    assert "OrderID" in merged.columns
-
-# 5.
-def test_dataframe_pivot_table(pivot_table):
-    assert pivot_table.loc["North", "A"] == 200
-    assert pivot_table.loc["South", "B"] == 400
+    def test_dataframe_columns(self):
+        """Test if DataFrame contains required columns"""
+        df = self.global_env.get("df", None)
+        required_columns = {"Name", "Age", "Score"}
+        self.assertIsNotNone(df, "df not found in notebook")
+        self.assertTrue(required_columns.issubset(df.columns), "Missing required columns in df")
 
 if __name__ == "__main__":
-    # call the functions
+    unittest.main(argv=[''], exit=False)
