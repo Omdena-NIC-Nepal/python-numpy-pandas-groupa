@@ -1,7 +1,35 @@
 import unittest
+import io
+import sys
+import pytest
+# import assignment  # Assumes the student's solution is in assignment.py
+import nbconvert
+# In test file
+import importlib.util
 import numpy as np
 import pandas as pd
 
+def notebook_to_python(notebook_path):
+    """Convert Jupyter notebook to Python script"""
+    exporter = nbconvert.PythonExporter()
+    python_code, _ = exporter.from_filename(notebook_path)
+    return python_code
+
+def import_notebook_module(notebook_path):
+    """Dynamically import notebook as a module"""
+    module_name = 'assignment'
+    spec = importlib.util.spec_from_loader(module_name, loader=None)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    
+    with open(notebook_path, 'r') as f:
+        notebook_content = nbconvert.PythonExporter().from_filename(notebook_path)[0]
+    
+    exec(notebook_content, module.__dict__)
+    return module
+
+# Then use in tests
+assignment = import_notebook_module('assignment.ipynb')
     
 # Task 1: NumPy Basics
 # 1.
