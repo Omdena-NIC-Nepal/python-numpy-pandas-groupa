@@ -32,6 +32,7 @@ This assignment is designed to test your understanding of Numpy, Pandas, and Pan
 
 ## Grading Criteria
 - Each task is worth 10 points.
+- Complete all tests.
 - You must pass all test cases to receive full credit.
 
 ## Submission
