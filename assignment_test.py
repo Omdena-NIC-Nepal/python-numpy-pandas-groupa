@@ -8,8 +8,7 @@ def test_numpy_array_creation(arr):
     expected = np.array([0, 0, 0, 0, 1, 0, 0, 0, 0, 0])
     np.testing.assert_array_equal(arr, expected)
 
-def test_numpy_matrix_creation(self):
-    matrix = np.arange(16).reshape(4, 4)
+def test_numpy_matrix_creation(matrix):
     expected = np.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]])
     np.testing.assert_array_equal(matrix, expected)
 
