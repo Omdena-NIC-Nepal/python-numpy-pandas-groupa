@@ -1,81 +1,55 @@
+import unittest
 import numpy as np
 import pandas as pd
 
-# Test function for numpy
-def test_numpy_exercises():
-    # Test 1: Create an array of 10 zeros with the fifth element set to 1
-    arr = np.zeros(10, dtype=int)
-    arr[4] = 1
-    assert np.array_equal(arr, np.array([0, 0, 0, 0, 1, 0, 0, 0, 0, 0])), "Test 1 Failed"
-
-    # Test 2:
-    arr_matrix = np.arange(16).reshape(4, 4)
-    assert np.array_equal(arr_matrix, np.arange(16).reshape(4, 4)), "Test 2 Failed"
-
-    # Test 3: Array Operations
-    a = np.array([1, 2, 3, 4, 5])
-    b = np.array([10, 20, 30, 40, 50])
     
-    assert np.array_equal(a + b, np.array([11, 22, 33, 44, 55])), "Test 4 Addition Failed"
-    assert np.array_equal(a - b, np.array([-9, -18, -27, -36, -45])), "Test 4 Subtraction Failed"
-    assert np.array_equal(a * b, np.array([10, 40, 90, 160, 250])), "Test 4 Multiplication Failed"
-    assert np.array_equal(a / b, np.array([0.1, 0.1, 0.1, 0.1, 0.1])), "Test 4 Division Failed"
+# Task 1: NumPy Basics
+def test_numpy_array_creation(arr):
+    expected = np.array([0, 0, 0, 0, 1, 0, 0, 0, 0, 0])
+    np.testing.assert_array_equal(arr, expected)
 
-    # Test 4: Array Slicing
-    arr2 = np.array([10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
-    sliced = arr2[2:7]  # index 2 to 6
-    assert np.array_equal(sliced, np.array([30, 40, 50, 60, 70])), "Test 5 Failed"
+def test_numpy_matrix_creation(self):
+    matrix = np.arange(16).reshape(4, 4)
+    expected = np.array([[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]])
+    np.testing.assert_array_equal(matrix, expected)
 
-    # Test 5: NumPy Methods
-    arr3 = np.random.randint(1, 50, (3, 3))
-    mean_value = arr3.mean()
-    sum_value = arr3.sum()
-    max_value = arr3.max()
-    
-    assert isinstance(mean_value, (float, np.floating)), "Test 6 Mean Failed"
-    assert isinstance(sum_value, (int, np.integer)), "Test 6 Sum Failed"
-    assert isinstance(max_value, (int, np.integer)), "Test 6 Max Failed"
+def test_numpy_operations(arr1, arr2):
+    np.testing.assert_array_equal(arr1 + arr2, np.array([5, 7, 9]))
+    np.testing.assert_array_equal(arr1 - arr2, np.array([-3, -3, -3]))
+    np.testing.assert_array_equal(arr1 * arr2, np.array([4, 10, 18]))
+    np.testing.assert_array_equal(arr1 / arr2, np.array([0.25, 0.4, 0.5]))
 
-    print("All tests passed successfully!")
+def test_numpy_slicing(sliced):
+    expected = np.array([30, 40, 50, 60, 70])
+    np.testing.assert_array_equal(sliced, expected)
 
+# Task 2: Pandas Basics
+def test_pandas_series_creation(series):
+    assert series['a'] == 10
+    assert series['e'] == 50
 
-# Test function for pandas
-def test_pandas_exercises():
-    try:
-        # Test Exercise 1: Creating Pandas Series
-        series = pd.Series([10, 20, 30, 40, 50], index=['a', 'b', 'c', 'd', 'e'])
-        assert isinstance(series, pd.Series), "Exercise 1 Failed: Not a Pandas Series"
-        assert list(series.values) == [10, 20, 30, 40, 50], "Exercise 1 Failed: Values mismatch"
+def test_dataframe_reading_and_manipulation(df):
+    df['Tax'] = df['Salary'] * 0.1
+    assert df.loc[0, 'Tax'] == 5000
+    assert df.loc[1, 'Tax'] == 6000
+    filtered_df = df[df['Age'] > 36]
+    assert len(filtered_df) == 1
+    assert filtered_df.iloc[0]['Name'] == "Bob"
 
-        # Test Exercise 2: Reading CSV File
-        df = pd.DataFrame({
-            "Name": ["Alice", "Bob", "Charlie", "David", "Eve"],
-            "Age": [25, 32, 40, 28, 50],
-            "Salary": [50000, 60000, 75000, 55000, 90000]
-        })
-        assert isinstance(df, pd.DataFrame), "Exercise 2 Failed: Not a DataFrame"
+def test_dataframe_aggregation(sales_data):
+    total_sales = sales_data.groupby("Region")["Sales"].sum()
+    assert total_sales["North"] == 2200
+    assert total_sales["South"] == 1500
 
-        # Test Exercise 3: Slicing DataFrame
-        sliced_df = df.iloc[:3]
-        assert sliced_df.shape[0] == 3, "Exercise 3 Failed: Incorrect number of rows"
+def test_dataframe_merging(customers, orders):
+    merged = pd.merge(customers, orders, on="CustomerID")
+    assert len(merged) == 2
+    assert "OrderID" in merged.columns
 
-        # Test Exercise 4: Adding a Column (Tax Calculation)
-        df["Tax"] = df["Salary"] * 0.1
-        assert "Tax" in df.columns, "Exercise 4 Failed: Column 'Tax' not added"
-        assert np.isclose(df["Tax"][0], 5000.0), "Exercise 4 Failed: Incorrect Tax Calculation"
+def test_dataframe_pivot_table(sales_data):
+    pivot_table = sales_data.pivot_table(values="Sales", index="Region", columns="Product", aggfunc="sum")
+    assert pivot_table.loc["North", "A"] == 2200
+    assert pivot_table.loc["South", "B"] == 1500
 
-        # Test Exercise 5: Filtering Data
-        filtered_df = df[df["Age"] > 30]
-        assert all(filtered_df["Age"] > 30), "Exercise 5 Failed: Incorrect filtering"
-
-        print("All exercises passed successfully! ✅")
-
-    except AssertionError as e:
-        print(e)
-
-# Run the test script
-test_numpy_exercises()
-
-
-# Run the test function
-test_pandas_exercises()
+if __name__ == "__main__":
+    unittest.main()
